@@ -1,14 +1,11 @@
 #!/bin/sh
 set -e
 
-# Ce script est utilisé pour deployer la migration de prisma  
+echo "Generating Prisma client"
+npx prisma generate
 
-if [ "$NODE_ENV" = "production" ]; then
-    echo "Environment: PRODUCTION"
-    echo "lancement du deploy de prisma"
-    npx prisma migrate deploy
-fi
+echo "Applying schema to database"
+npx prisma db push --accept-data-loss
 
-
-echo "Démarrage de l'application..."
+echo "Starting app"
 exec "$@"
