@@ -14,6 +14,7 @@ export interface AuthUser {
   id: number;
   name: string;
   email: string;
+  role?: string;
 }
 
 export interface AuthResponse {
@@ -55,6 +56,7 @@ export class AuthService {
         id: true,
         name: true,
         email: true,
+        role: true,
       },
     });
 
@@ -79,6 +81,7 @@ export class AuthService {
         name: true,
         email: true,
         passwordHash: true,
+        role: true,
       },
     });
 
@@ -92,6 +95,7 @@ export class AuthService {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: (user as any).role,
       },
     };
   }
