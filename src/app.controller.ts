@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { TokenAuthGuard } from './auth/token-auth.guard';
 
@@ -8,7 +8,7 @@ export class AppController {
 
   @Get()
   @UseGuards(TokenAuthGuard)
-  getHello(@Req() req): string {
+  getHello(): string {
     return this.appService.getHello();
   }
 }

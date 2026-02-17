@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TokenAuthGuard } from './auth/token-auth.guard';
+import { PrismaService } from './prisma/prisma.service';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -8,7 +10,17 @@ describe('AppController', () => {
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
-      providers: [AppService],
+      providers: [
+        AppService,
+        {
+          provide: TokenAuthGuard,
+          useValue: { canActivate: jest.fn().mockReturnValue(true) },
+        },
+        {
+          provide: PrismaService,
+          useValue: { user: { findUnique: jest.fn() } },
+        },
+      ],
     }).compile();
 
     appController = app.get<AppController>(AppController);
