@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
+
 function parseCorsOrigins(): string[] {
   const raw = process.env.FRONTEND_ORIGIN;
   if (!raw) {
@@ -21,8 +22,11 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   // validation
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,               
+    forbidNonWhitelisted: true,    
+    transform: true,              
+  }));
   app.enableCors({
     origin: parseCorsOrigins(),
     credentials: true,
