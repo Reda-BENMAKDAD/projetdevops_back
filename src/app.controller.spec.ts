@@ -11,7 +11,7 @@ describe('AppController', () => {
       controllers: [AppController],
       providers: [AppService
       {
-          provide: PrismaService
+          provide: PrismaService,
           useValue: {}
       }
 
