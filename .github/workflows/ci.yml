@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [ 'main', 'developpement', 'feature/ajoute-CI' ]
+  pull_request:
+    branches: [ 'main', 'developpement', 'feature/ajoute-CI' ]
+
+jobs:
+  build:
+    name: Build and Dockerize
+    runs-on: ubuntu-latest
+    env:
+      NODE_VERSION: '20'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run tests
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npm test --silent  
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Build (TypeScript -> JavaScript)
+        run: npm run build --if-present
+
+      - name: Set lowercase repository name
+        run: |
+          echo "REPO_LC=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image (local)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: ${{ env.REPO_LC }}:${{ github.sha }}
